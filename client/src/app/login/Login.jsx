@@ -43,7 +43,6 @@ const Login = () => {
       dispatch(toggleSideBar(false))
       setTimeout(() => {
           if (res?.user?.role === SUPERUSER_ROLE){
-              console.log(SUPERUSER_ROLE + "rezrzerzaerezr imed")
             navigate('/admin/manage/projects')
 
           }else{

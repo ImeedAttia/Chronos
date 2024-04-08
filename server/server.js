@@ -21,6 +21,8 @@ import requestRoutes from "./routes/request.route.js"
 import passport from "./controllers/auth/passport-config.js";
 // import { User, UserProfile } from './db/relations.js';
 import path from "path";
+import leaveRoutes from "./routes/leave.route.js";
+import remoteRoutes from "./routes/remote.route.js";
 import { fileURLToPath } from "url";
 const app = express();
 
@@ -50,6 +52,8 @@ app.use("/api/phases", phasesRoutes);
 app.use("/api/lots", lotRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/remote",remoteRoutes);
 //testing routes
 app.use("/api/projects/test", projectTestRoutes);
 

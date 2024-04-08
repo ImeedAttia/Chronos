@@ -30,6 +30,7 @@ import { config } from "../environment.config.js";
 
 import { readFile } from "fs/promises";
 
+import Leave from "../models/Leave.js";
 var db = [];
 var userDb = [];
 
@@ -425,4 +426,69 @@ if (helpOptionIndex !== -1) {
     default:
       console.error("invalid action ");
   }
+
+
+  async function runLeaveMigration(verbose) {
+    try {
+      const leaveData = await importJSON(filePath); // Assuming leave data is provided in a JSON file
+  
+      if (verbose) {
+        console.info("Migrating leave data...");
+      }
+  
+      // Process leave data and insert into the database
+      await Leave.bulkCreate(leaveData);
+  
+      if (verbose) {
+        console.info("Leave data migrated successfully");
+      }
+    } catch (error) {
+      console.error(`Leave migration failed: ${error}`);
+    }
+  }
+  
+  // Modify the CLI switch statement to include leave migration option
+  switch (switcher) {
+    case "db":
+      if (filePath && filePath !== "--") {
+        try {
+          const data = await importJSON(filePath);
+          db = data;
+          console.log(`Running projects migration`);
+          runProjectsMigration(verboseOptionIndex !== -1 ? true : false);
+          
+          // Call leave migration function after project migration
+          console.log(`Running leave migration`);
+          runLeaveMigration(verboseOptionIndex !== -1 ? true : false);
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        console.error("File doesn't exist");
+      }
+      break;
+    case "users":
+      try {
+        const data = await importJSON(filePath);
+        userDb = data;
+        console.log(`Running users migration`);
+        runUserMMigration(verboseOptionIndex !== -1 ? true : false);
+      } catch (error) {
+        console.error(error);
+      }
+  
+      break;
+    case "leave": // Add leave migration case
+      try {
+        const data = await importJSON(filePath);
+        console.log(`Running leave migration`);
+        runLeaveMigration(verboseOptionIndex !== -1 ? true : false);
+      } catch (error) {
+        console.error(error);
+      }
+      break;
+    default:
+      console.error("Invalid action");
+  }
+
 }

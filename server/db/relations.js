@@ -8,6 +8,8 @@ import UserProfile from "../models/users/UserProfile.model.js";
 //references  project
 import { config } from "../environment.config.js";
 import Lot from "../models/project/Lot.model.js.js";
+import Leave from "../models/leave/leave.model.js";
+
 import Phase from "../models/project/Phase.model.js";
 import ProjectLots from "../models/project/ProjectLot.model.js";
 import Task from "../models/tasks/tasks.model.js";
@@ -104,4 +106,4 @@ database.sync({ force: force, alter: db_sync }).then(() => {
   );
 });
 
-export { Lot, Phase, Project, ProjectLots, User, UserProfile ,Task, Intervenant,Request };
+export { Lot, Phase, Project, ProjectLots, User, UserProfile ,Task, Intervenant,Request ,Leave};

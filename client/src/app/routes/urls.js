@@ -21,7 +21,12 @@ import faProject from "../public/svgs/light/diagram-project.svg";
 import faTimeLine from "../public/svgs/light/list-timeline.svg";
 import faLogout from "../public/svgs/light/right-from-bracket.svg";
 import faUser from "../public/svgs/light/user.svg";
+import leavelogo from "../public/svgs/light/leave.svg";
+import manageLeave from "../public/svgs/light/manageLeave.svg";
+
 import ResetPassword from "../reset_password/ResetPassword";
+import Leave from "../leave/Leave.jsx";
+import ManagingLeaves from "../Components/managing/leaves/ManagingLeaves.jsx"
 export const anonymousUrls = [
   { title: "", path: "/", Component: <Navigate to="/login" /> },
   { title: "Login", path: "/login", Component: <Login /> },
@@ -80,7 +85,25 @@ export const protectedUrls = [
     sideBar: false,
     superUser: true,
   },
-
+  {
+    role: ALL_ROLES,
+    title: "Congé",
+    path: "/leave",
+    Component: <Leave />,
+    icon: leavelogo,
+    sideBar: true,
+    superUser: true,
+  },
+  {
+    role: [SUPERUSER_ROLE],
+    title: "Gérer les Congé",
+    path: "/admin/manage/leaves",
+    Component: <ManagingLeaves />,
+    icon: manageLeave,
+    sideBar: true,
+    superUser: true,
+  },
+  
   {
     role: [SUPERUSER_ROLE],
     title: "Gérer les utilisateurs",
