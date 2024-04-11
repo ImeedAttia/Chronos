@@ -13,6 +13,7 @@ import {hideDailyTask, updateDailyHours} from "../../../../store/reducers/task.r
 import useGetStateFromStore from "../../../../hooks/manage/getStateFromStore";
 import dayjs from "dayjs";
 import useFetchDailyLog from "../../../../services/fetchers/dailyLog.fetch.service";
+import {useGetUserByIdMutation} from "../../../../store/api/users.api";
 
 
 function ManagingLeaves() {
@@ -25,6 +26,9 @@ function ManagingLeaves() {
     const classes = ManagingLeavesStyles();
     const { user } = useGetAuthenticatedUser();
     const [leaves, setLeaves] = useState([]);
+    const [pendingCountRemotes, setPendingCountRemotes] = useState(0);
+    const [pendingCountleaves, setPendingCountleaves] = useState(0);
+
     const [remotes, setRemotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('leaves');
@@ -37,10 +41,7 @@ function ManagingLeaves() {
     const [getAllRemote] = useGetAllRemoteWorksMutation();
     const [changeRemote] = useUpdateRemoteWorkMutation();
     const [changeLeave] = useUpdateLeaveMutation();
-
-    const handleChangeHourTask = (id, val) => {
-
-    };
+    const [getUser] = useGetUserByIdMutation();
 
     function formatDate(date) {
         const year = date.getFullYear();
@@ -54,20 +55,91 @@ function ManagingLeaves() {
             try {
                 const response = await getAllLeaves();
                 const leavesArray = Object.values(response)[0]?.leaves || [];
-                const formattedLeaves = leavesArray.map(leave => ({
-                    ...leave,
-                    dateDebut: formatDate(new Date(leave.dateDebut)),
-                    dateFin: formatDate(new Date(leave.dateFin)),
-                }));
-                setLeaves(formattedLeaves);
+                console.log(leavesArray);
+                const formattedLeaves = [];
+                for (const leave of leavesArray) {
+                    const userResponse = await getUser(leave.userID);
+                    const user = Object.values(userResponse)[0] || {}; // Assuming user is available
+                    const currentDate = new Date();
+                    const leaveCreateDate = new Date(leave.createdAt);
+                    const timeDifference = currentDate - leaveCreateDate;
 
+                    // Calculating time difference in milliseconds
+                    const secondsDifference = Math.floor(timeDifference / 1000);
+                    const minutesDifference = Math.floor(secondsDifference / 60);
+                    const hoursDifference = Math.floor(minutesDifference / 60);
+                    const daysDifference = Math.floor(hoursDifference / 24);
+                    const monthsDifference = Math.floor(daysDifference / 30);
+                    const yearsDifference = Math.floor(monthsDifference / 12);
+
+                    let formattedCreateDate;
+
+                    if (yearsDifference >= 1) {
+                        formattedCreateDate = "il y a " + yearsDifference + " années";
+                    } else if (monthsDifference >= 2) {
+                        formattedCreateDate = "il y a " + monthsDifference + " mois";
+                    } else if (daysDifference >= 30) {
+                        formattedCreateDate = "il y a " + monthsDifference + " mois";
+                    } else if (hoursDifference >= 24) {
+                        formattedCreateDate = "il y a " + daysDifference + " jours";
+                    } else if (minutesDifference >= 60) {
+                        formattedCreateDate = "il y a " + hoursDifference + " heures";
+                    } else {
+                        formattedCreateDate = "il y a " + minutesDifference + " minutes";
+                    }
+
+                    formattedLeaves.push({
+                        ...leave,
+                        createDate: formattedCreateDate,
+                        username: user.profile.lastName + " " + user.profile.name,
+                        role: user.user.role
+                    });
+                }
+                setLeaves(formattedLeaves);
+                setPendingCountleaves(formattedLeaves.filter(leave => leave.status === 'En cours').length);
                 const remoteResponse = await getAllRemote();
                 const remoteArray = Object.values(remoteResponse)[0]?.remoteWorks || [];
-                const formattedRemotes = remoteArray.map(remote => ({
-                    ...remote,
-                    remoteDate: formatDate(new Date(remote.remoteDate)),
-                }));
+                const formattedRemotes = [];
+                for (const remote of remoteArray) {
+                    const userResponse = await getUser(remote.userID);
+                    const user = Object.values(userResponse)[0] || {}; // Assuming user is available
+                    const currentDate = new Date();
+                    const remoteCreateDate = new Date(remote.createdAt);
+                    const timeDifference = currentDate - remoteCreateDate;
+
+                    // Calculating time difference in milliseconds
+                    const secondsDifference = Math.floor(timeDifference / 1000);
+                    const minutesDifference = Math.floor(secondsDifference / 60);
+                    const hoursDifference = Math.floor(minutesDifference / 60);
+                    const daysDifference = Math.floor(hoursDifference / 24);
+                    const monthsDifference = Math.floor(daysDifference / 30);
+                    const yearsDifference = Math.floor(monthsDifference / 12);
+
+                    let formattedCreateDate;
+
+                    if (yearsDifference >= 1) {
+                        formattedCreateDate = "il y a " + yearsDifference + " années";
+                    } else if (monthsDifference >= 2) {
+                        formattedCreateDate = "il y a " + monthsDifference + " mois";
+                    } else if (daysDifference >= 30) {
+                        formattedCreateDate = "il y a " + monthsDifference + " mois";
+                    } else if (hoursDifference >= 24) {
+                        formattedCreateDate = "il y a " + daysDifference + " jours";
+                    } else if (minutesDifference >= 60) {
+                        formattedCreateDate = "il y a " + hoursDifference + " heures";
+                    } else {
+                        formattedCreateDate = "il y a " + minutesDifference + " minutes";
+                    }
+
+                    formattedRemotes.push({
+                        ...remote,
+                        createDate: formattedCreateDate,
+                        username: user.profile.lastName + " " + user.profile.name,
+                        role: user.user.role
+                    });
+                }
                 setRemotes(formattedRemotes);
+                setPendingCountRemotes(formattedRemotes.filter(remote => remote.status === 'En cours').length);
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -88,18 +160,48 @@ function ManagingLeaves() {
         setTimeout(() => {
             detailBlockRef.current.scrollIntoView({behavior: 'smooth'});
         }, 100); // Adjust the timeout duration as needed
-//        setHistory(dayjs(row.row.dateDebut));
     };
 
     const columnsTableLeave = [
         { field: 'id', headerName: 'ID', width: 100 },
-        { field: 'dateDebut', headerName: 'Start Date', width: 150 },
-        { field: 'dateFin', headerName: 'End Date', width: 150 },
-        { field: 'type', headerName: 'Type', width: 150 },
+        { field: 'username', headerName: 'Nom et Prénom', width: 150 },
+        { field: 'role', headerName: 'role', width: 150 },
+        { field: 'type', headerName: 'Type', width: 90, renderCell: (params) => {
+                if (params.value === 'Annuelle') {
+                    return (
+                        <div style={{
+                            color: "#ddfaf4",
+                            backgroundColor: "orange",
+                            borderRadius: "5px",
+                            padding: "5px"
+                        }}>Annuelle</div>
+                    );
+                } else if (params.value === 'Maternité') {
+                    return (
+                        <div style={{
+                            color: "#ddfaf4",
+                            backgroundColor: "green",
+                            borderRadius: "5px",
+                            padding: "5px"
+                        }}>Maternité</div>
+                    );
+                } else {
+                    return (
+                        <div style={{
+                            color: "#ddfaf4",
+                            backgroundColor: "red",
+                            borderRadius: "5px",
+                            padding: "5px"
+                        }}>Maladie</div>
+                    );
+                }
+
+            }
+        },
         {
             field: 'status',
-            headerName: 'Etat de demande',
-            width: 120,
+            headerName: 'Status de la demande',
+            width: 180,
             renderCell: (params) => {
                 let statusColor = '';
                 switch (params.value) {
@@ -119,12 +221,17 @@ function ManagingLeaves() {
                 return <div style={{ color: statusColor }}>{params.value}</div>;
             }
         },
+        { field: 'createDate', headerName: 'Start Date', width: 200,renderCell: (params) => {
+                return <div style={{color: "#46efcc"}}>{params.value}</div>;
+            }
+        },
     ];
 
     const columnsTableRemote = [
-        { field: 'id', headerName: 'ID', width: 100 },
         { field: 'reference', headerName: 'Référence', width: 150 },
-        { field: 'remoteDate', headerName: 'Date', width: 150 },
+        { field: 'username', headerName: 'Nom et Prénom', width: 150 },
+        { field: 'role', headerName: 'role', width: 250 },
+        { field: 'createDate', headerName: 'Date', width: 200 },
         {
             field: 'status',
             headerName: 'Etat de demande',
@@ -168,7 +275,6 @@ function ManagingLeaves() {
                     // Update the leave with only status and id fields
                     const { id, status } = updatedLeaves.find(leave => leave.id === selectedRow.id);
                     const responseUpdate = await changeLeave({ id, status });
-                    console.log(responseUpdate);
                 }
                 else if (activeTab === 'remote') {
                     const updatedRemotes = remotes.map(remote => {
@@ -205,7 +311,6 @@ function ManagingLeaves() {
                     // Update the leave with only status and id fields
                     const { id, status } = updatedLeaves.find(leave => leave.id === selectedRow.id);
                     const responseUpdate = await changeLeave({ id, status });
-                    console.log(responseUpdate);
                 }
                 else if (activeTab === 'remote') {
                     const updatedRemotes = remotes.map(remote => {
@@ -227,17 +332,8 @@ function ManagingLeaves() {
         }
     };
 
-    const getPendingCount = () => {
-        let pendingCount = 0;
-        if (activeTab === 'leaves') {
-            pendingCount = leaves.filter(leave => leave.status === 'En cours').length;
-        } else if (activeTab === 'remote') {
-            pendingCount = remotes.filter(remote => remote.status === 'En cours').length;
-        }
-        return pendingCount;
-    };
+
     if (loading) return <Loading />;
-    const pendingCount = getPendingCount();
     return (
         <div className={classes.root}>
             <div className={classes.titleSection}>
@@ -252,7 +348,7 @@ function ManagingLeaves() {
                             disabled={activeTab === 'leaves'}
                             onClick={() => handleTabChange('leaves')}
                         >
-                            Les demande de Congé ({pendingCount})
+                            Les demande de Congé ({pendingCountleaves})
                         </Button>
                     </div>
                     <div className={classes.roleBtn}>
@@ -262,7 +358,7 @@ function ManagingLeaves() {
                             disabled={activeTab === 'remote'}
                             onClick={() => handleTabChange('remote')}
                         >
-                            Les demande de TT ({pendingCount})
+                            Les demande de TT ({pendingCountRemotes})
                         </Button>
                     </div>
                 </div>
@@ -296,7 +392,6 @@ function ManagingLeaves() {
                                         <div>
                                             {generalTasks.map((daily, idx) => (
                                                 <TaskItem
-                                                    handleChange={handleChangeHourTask}
                                                     extra={true}
                                                     historyDate={history}
                                                     id={daily.id}

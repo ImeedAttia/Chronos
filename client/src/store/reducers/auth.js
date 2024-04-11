@@ -27,7 +27,7 @@ const authSlice = createSlice({
 
         // Calculate the time remaining in seconds
         const timeRemaining = expirationTime - currentTime;
-
+        console.log(token);
         cookies.set(
           "session_token",
           token,

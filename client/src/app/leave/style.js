@@ -120,6 +120,7 @@ export const leaveComponentStyles = createUseStyles({
       height : "100px",
       width : "13%",
       borderBottomLeftRadius: '20px',
+      zIndex :'1'
     },
   contentSection: {
     background: "var(--white)",

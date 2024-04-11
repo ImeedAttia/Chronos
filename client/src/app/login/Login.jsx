@@ -46,7 +46,6 @@ const Login = () => {
             navigate('/admin/manage/projects')
 
           }else{
-              console.log("User nrml" + "rezrzerzaerezr imed")
               navigate('/profile/me')
 
           }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useGetAllLeavesByEmailMutation, useCreateLeaveMutation } from '../../store/api/leave.api';
 import { useDispatch } from 'react-redux';
 import Loading from '../Components/loading/Loading';
-import { Button, TextField } from '@mui/material';
+import {Button, Select, MenuItem,TextField} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { leaveComponentStyles } from './style';
 import useGetAuthenticatedUser from "../../hooks/authenticated";
@@ -232,11 +232,16 @@ function LeaveComponent() {
                   onChange={(e) => setNewLeaveData({ ...newLeaveData, dateFin: e.target.value })}
                   className={classes.datePicker}
                 />
-                <TextField
-                  label="Type"
-                  value={newLeaveData.type}
-                  onChange={(e) => setNewLeaveData({ ...newLeaveData, type: e.target.value })}
-                />
+                <Select
+                    label={"Type : "}
+                    value={newLeaveData.type}
+                    onChange={(e) => setNewLeaveData({...newLeaveData, type: e.target.value})}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  <MenuItem value="Annuelle">Annuelle</MenuItem>
+                  <MenuItem value="Maternité">Maternité</MenuItem>
+                  <MenuItem value="Maladie">Maladie</MenuItem>
+                </Select>
               </div>
               <div className={classes.buttonContainer}>
                 <div className={classes.roleBtn}>

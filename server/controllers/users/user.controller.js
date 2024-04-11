@@ -306,13 +306,24 @@ export const getUserInfo = catchAsync(async (req, res, next) => {
  * @param {*} id
  * @returns
  */
-export const getUserByID = async (id) => {
+export const getUserByID = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
   if (!id) return null;
-  const user = await User.findByPk(id);
-  if (!user) return null;
+  const queryOptions = {
+    where: { id : id }
+  };
 
-  return user;
-};
+  // Conditionally include the UserProfile relation based on includeProfile parameter
+    queryOptions.include = UserProfile;
+
+  const user = await User.findOne(queryOptions);
+  if (!user) return null;
+  return res.status(200).json({
+    status: "success",
+    user: serializeUser(user),
+    profile: serializeProfile(user.UserProfile),
+  });
+});
 
 /**
  update user profile : accepts all the fields of the user

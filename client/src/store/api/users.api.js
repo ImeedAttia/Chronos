@@ -9,6 +9,12 @@ export const userApi = api.injectEndpoints({
         data: data
       })
     }),
+    getUserById: builder.mutation({
+      query: (id) => ({
+        url: `/users/user-info/${id}`,
+        method: "GET",
+      })
+    }),
     updateUserProfile: builder.mutation({
       query: (data) => ({
         url: `/users/profile/change`,
@@ -75,5 +81,6 @@ export const {
   useVerifyTokenConfirmationMutation,
   useBanUserMutation,
   useUnBanUserMutation,
-  useChangeRoleMutation
+  useChangeRoleMutation,
+  useGetUserByIdMutation
 } = userApi;
