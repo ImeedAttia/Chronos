@@ -25,8 +25,8 @@ export const remoteWorkApi = api.injectEndpoints({
       }),
     }),
     updateRemoteWork: builder.mutation({
-      query: ({ remoteWorkId, ...data }) => ({
-        url: `/remote/${remoteWorkId}`,
+      query: (data) => ({
+        url: `/remote/${data?.id}`,
         method: "PUT",
         data: data,
       }),

@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), getAllLeavesController);
 router.post("/user", isUserAuthenticated, getAllLeavesByUserId); // Route for fetching leaves by user email in the body
 router.post("/", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), createLeave);
-router.put("/:leaveId", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), updateLeave);
+router.put("/:id", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), updateLeave);
 router.delete("/:leaveId", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), deleteLeave);
 
 export default router;

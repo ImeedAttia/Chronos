@@ -36,13 +36,14 @@ export const updateLeave = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { dateDebut, dateFin, type, status } = req.body;
+    if (!id) return next(new MissingParameter("Missing leave id"));
 
     const leave = await Leave.findByPk(id);
     if (!leave) {
-      throw new ElementNotFound("Leave not found");
+      throw new ElementNotFound("Leave not found"+ id);
     }
 
-    await leave.update({ dateDebut, dateFin, type, status,userID });
+    await leave.update({ dateDebut, dateFin, type, status });
     res.status(200).json({ leave });
   } catch (error) {
     next(error);

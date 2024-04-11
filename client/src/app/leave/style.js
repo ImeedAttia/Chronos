@@ -87,7 +87,7 @@ export const leaveComponentStyles = createUseStyles({
     fontFamily: "'MyriadPro', sans-serif !important",
   },
   textDesc: {
-    width: "1000px",
+    width: "80%",
     display: "inline-block",
     marginTop: "10px",
     marginLeft: "10px",
@@ -97,18 +97,19 @@ export const leaveComponentStyles = createUseStyles({
     fontFamily: "'MyriadPro', sans-serif !important",
   },
   tableContainer: {
-    width: "75%",
+    width: "82%",
     },
     orangeText: {
       float: 'right',
       backgroundColor:" #E76009",
       padding: '10px',
       color: 'white',
-      paddingRight: '20px',
+      paddingRight: '-20px',
       height : "100px",
-      marginRight : "20px",
-      width : "200px",
-      borderBottomLeftRadius: '20px' // Add curved border radius to the bottom left corner
+      marginRight : "0px",
+      width : "13%",
+      borderBottomLeftRadius: '20px', // Add curved border radius to the bottom left corner
+      borderBottomRightRadius: '20px'
     },
     greenText: {
       float: 'right',
@@ -117,7 +118,7 @@ export const leaveComponentStyles = createUseStyles({
       color: 'white',
       paddingRight: '20px',
       height : "100px",
-      width : "200px",
+      width : "13%",
       borderBottomLeftRadius: '20px',
     },
   contentSection: {

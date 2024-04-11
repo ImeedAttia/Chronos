@@ -25,8 +25,8 @@ export const leaveApi = api.injectEndpoints({
       }),
     }),
     updateLeave: builder.mutation({
-      query: ({ leaveId, ...data }) => ({
-        url: `/leaves/${leaveId}`,
+      query: (data) => ({
+        url: `/leaves/${data?.id}`,
         method: "PUT",
         data: data,
       }),

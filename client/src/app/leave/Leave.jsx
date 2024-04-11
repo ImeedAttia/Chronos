@@ -54,11 +54,6 @@ function LeaveComponent() {
           }));
           setLeaves(formattedLeaves);
 
-          // Calculate remaining days for leaves
-          const leavesTaken = formattedLeaves.length;
-          const remainingLeaves = 20 - leavesTaken;
-          setAddDisableLeave(remainingLeaves <= 0);
-
           const remoteResponse = await getAllRemoteByEmail({ email: user?.email });
           const remoteArray = Object.values(remoteResponse)[0]?.remoteWorks || [];
           const formattedRemotes = remoteArray.map(remote => ({
