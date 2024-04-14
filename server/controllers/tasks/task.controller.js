@@ -34,7 +34,7 @@ import InterventionHour from "../../models/tasks/interventionHours.model.js";
 import { takeNote } from "../../Utils/writer.js";
 import { findObjectDifferences, removeDuplicates } from "../../Utils/utils.js";
 import { calculateDates } from "../projects/lib.js";
-import { isAllProjectsAreValid, isAllTasksAreValid } from "./lib.js";
+import { isAllProjectsAreValid, isAllTasksAreValid ,getAllTasksBetweenDatesForUser} from "./lib.js";
 import { messages } from "../../i18n/messages.js";
 
 /*
@@ -400,6 +400,26 @@ export const associateIntervenantToTask = catchAsync(async (req, res, next) => {
  * }
  *
  */
+// Assuming you have a TaskService with a method getAllTasksBetweenDatesForUser(userId, startDate, endDate)
+// that fetches all tasks for a user between the given start and end dates.
+
+export const getAllDoneTasksBetweenDatesForUser = catchAsync(async (req, res, next) => {
+  console.log(req)
+  const { startDate, endDate, userId } = req.body;
+
+  // Check if startDate and endDate are valid dates
+  if (!startDate || !endDate || !userId) {
+    return res.status(400).json({ status: "error", message: "Invalid input data" });
+  }
+
+  // Call your service method to fetch tasks
+  const tasks = await getAllTasksBetweenDatesForUser(userId, startDate, endDate);
+
+  // Filter out tasks that are not done
+  const doneTasks = tasks.filter(task => task.state === 'doing');
+
+  return res.status(200).json({ status: "success", data: doneTasks });
+});
 
 export const updateIntervenantHours = catchAsync(async (req, res, next) => {
   const { userTasks, date } = req.body;

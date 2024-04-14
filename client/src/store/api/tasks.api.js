@@ -14,6 +14,13 @@ export const taskApi = api.injectEndpoints({
         method: "GET"
       })
     }),
+    getTasksForUser: builder.mutation({
+      query: (data) => ({
+        url: `tasks/tasksforuser`,
+        method: "POST",
+        data : data
+      }),
+    }),
     getTaskPotentialIntervenants: builder.mutation({
       query: ({ projectID, taskID }) => ({
         url: `tasks/project/${projectID}/potential/task/intervenants/list`,
@@ -101,5 +108,6 @@ export const {
   useDownloadTaskFileMutation,
   useUploadFileToTaskMutation,
   useFilterProjectsTasksByDatesMutation,
-  useDeleteFileFromTaskMutation
+  useDeleteFileFromTaskMutation,
+  useGetTasksForUserMutation
 } = taskApi;

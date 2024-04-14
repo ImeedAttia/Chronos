@@ -1,6 +1,6 @@
 import { createUseStyles } from "react-jss";
 
-export const projectOverviewStyles = createUseStyles({
+export const leaveConfigurationStyles = createUseStyles({
     root: {
         width: "100%",
         justifyContent: "center",
@@ -10,7 +10,7 @@ export const projectOverviewStyles = createUseStyles({
     titleSection: {
         backgroundColor: "var(--light-green)",
         padding: "30px",
-        borderRadius: "30px 30px 30px 30px",
+        borderRadius: "30px 30px 0 0",
         marginBottom: "10px",
     },
     spanT: {
@@ -21,15 +21,15 @@ export const projectOverviewStyles = createUseStyles({
         fontFamily: "'MyriadPro', sans-serif !important",
     },
     contentSection: {
-        width: "70%", // Take 70% of the width of the page
         background: "var(--white)",
         borderRadius: "20px",
         paddingBottom: "20px",
         paddingLeft: "20px",
         boxShadow: "0px 7px 33px 0px rgba(0,0,0,0.3)",
-        margin: "20px", // Add margin of 20px
         position: "relative",
         zIndex: 1,
+        marginTop: "-20px",
+        height: "calc(100% + 10px)",
         overflow: "auto",
         "&::-webkit-scrollbar": {
             width: "8px",
@@ -44,9 +44,5 @@ export const projectOverviewStyles = createUseStyles({
             borderRadius: "10px",
             background: "var(--pastel-green)",
         },
-    },
-
-    contentContainer: {
-        display: "block",
     },
 });

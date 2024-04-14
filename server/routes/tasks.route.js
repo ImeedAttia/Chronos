@@ -13,6 +13,7 @@ import {
   getProjectTasksBulkInDates,
   getTaskPotentialIntervenants,
   updateIntervenantHours,
+  getAllDoneTasksBetweenDatesForUser,
   updateTaskInfo
 } from "../controllers/tasks/task.controller.js";
 import { checkUserRole, isUserAuthenticated } from "../middleware/auth.js";
@@ -23,6 +24,11 @@ const router = Router();
 const fileUploader = createMulterMiddleware("file");
 
 router
+    .post(
+        "/tasksforuser",
+        isUserAuthenticated,
+        getAllDoneTasksBetweenDatesForUser
+    )
   .get(
     "/project/:projectID/all",
     isUserAuthenticated,

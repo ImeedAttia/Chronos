@@ -14,11 +14,16 @@ import useGetStateFromStore from "../../../../hooks/manage/getStateFromStore";
 import dayjs from "dayjs";
 import useFetchDailyLog from "../../../../services/fetchers/dailyLog.fetch.service";
 import {useGetUserByIdMutation} from "../../../../store/api/users.api";
+import {useGetTasksForUserMutation} from "../../../../store/api/tasks.api";
 
 
 function ManagingLeaves() {
 
+    const [tasks,setTasks] = useState([]);
+    const [userTasks] = useGetTasksForUserMutation();
+    //aaded this
     const generalTasks = useGetStateFromStore("task", "userGeneralTasks");
+    //removed this dayjs(new Date("05/06/2000")
     const [history, setHistory] = useState(dayjs(new Date("")));
     const hourDivision = useGetStateFromStore("task", "dailyLogDevisions");
     const { isLoading: loadingTasks } = useFetchDailyLog(history);
@@ -43,19 +48,11 @@ function ManagingLeaves() {
     const [changeLeave] = useUpdateLeaveMutation();
     const [getUser] = useGetUserByIdMutation();
 
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so add 1
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
     useEffect(() => {
         async function loadLeaves() {
             try {
                 const response = await getAllLeaves();
                 const leavesArray = Object.values(response)[0]?.leaves || [];
-                console.log(leavesArray);
                 const formattedLeaves = [];
                 for (const leave of leavesArray) {
                     const userResponse = await getUser(leave.userID);
@@ -100,6 +97,7 @@ function ManagingLeaves() {
                 const remoteResponse = await getAllRemote();
                 const remoteArray = Object.values(remoteResponse)[0]?.remoteWorks || [];
                 const formattedRemotes = [];
+                console.log(remoteArray);
                 for (const remote of remoteArray) {
                     const userResponse = await getUser(remote.userID);
                     const user = Object.values(userResponse)[0] || {}; // Assuming user is available
@@ -135,7 +133,7 @@ function ManagingLeaves() {
                         ...remote,
                         createDate: formattedCreateDate,
                         username: user.profile.lastName + " " + user.profile.name,
-                        role: user.user.role
+                        role: user.user.role,
                     });
                 }
                 setRemotes(formattedRemotes);
@@ -147,15 +145,35 @@ function ManagingLeaves() {
         }
 
         loadLeaves();
-    }, [dispatch, getAllLeaves, getAllRemote]);
+    }, [dispatch, getAllLeaves, getAllRemote,userTasks]);
 
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
 
-    const handleRowClick = (row) => {
-        console.log(generalTasks);
+    const handleRowClick = async (row) => {
+        if(activeTab === 'leaves'){
+            const userinfo = {
+                startDate: row?.row?.dateDebut,
+                endDate: row?.row?.dateFin,
+                userId: row?.row?.userID
+            };
+            const tasksss = await userTasks(userinfo);
+            const taskss = Object.values(tasksss)[0]?.data || [];
+            setTasks(taskss);
+        }else{
+            const userinfo = {
+                startDate: row?.row?.remoteDate,
+                endDate: new Date(new Date(row?.row?.remoteDate).setDate(new Date(row?.row?.remoteDate).getDate() + 1)),
+                userId: row?.row?.userID
+            };
+            console.log(userinfo);
+            const tasksss = await userTasks(userinfo);
+            const taskss = Object.values(tasksss)[0]?.data || [];
+            setTasks(taskss);
+        }
+
         setSelectedRow(row?.row);
         setTimeout(() => {
             detailBlockRef.current.scrollIntoView({behavior: 'smooth'});
@@ -221,7 +239,7 @@ function ManagingLeaves() {
                 return <div style={{ color: statusColor }}>{params.value}</div>;
             }
         },
-        { field: 'createDate', headerName: 'Start Date', width: 200,renderCell: (params) => {
+        { field: 'createDate', headerName: 'Date creation', width: 200,renderCell: (params) => {
                 return <div style={{color: "#46efcc"}}>{params.value}</div>;
             }
         },
@@ -231,7 +249,7 @@ function ManagingLeaves() {
         { field: 'reference', headerName: 'Référence', width: 150 },
         { field: 'username', headerName: 'Nom et Prénom', width: 150 },
         { field: 'role', headerName: 'role', width: 250 },
-        { field: 'createDate', headerName: 'Date', width: 200 },
+        { field: 'createDate', headerName: 'Date creation', width: 200 },
         {
             field: 'status',
             headerName: 'Etat de demande',
@@ -390,16 +408,13 @@ function ManagingLeaves() {
                                 <div>
                                     {!loadingTasks ? (
                                         <div>
-                                            {generalTasks.map((daily, idx) => (
+                                            {tasks.slice(0, 4).map((daily, idx) => (
                                                 <TaskItem
                                                     extra={true}
                                                     historyDate={history}
                                                     id={daily.id}
                                                     key={idx}
-                                                    hours={daily.nbHours}
-                                                    task={daily?.task}
-                                                    project={daily?.project}
-                                                    percentValue={DAILY_HOURS_VALUE}
+                                                    task={daily}
                                                     value={hourDivision.tasks[daily.id]?.value}
                                                     handleHide={(e) => hideTask(daily.id)}
                                                 />
@@ -419,7 +434,7 @@ function ManagingLeaves() {
                                 </Button>
                             </div>
                             <div className={classes.roleBtn}>
-                                <Button variant="contained" color="primary" onClick={() => handleAccept()} >
+                                <Button variant="contained" color="primary" onClick={() => handleAccept()}>
                                     Accepter
                                 </Button>
                             </div>

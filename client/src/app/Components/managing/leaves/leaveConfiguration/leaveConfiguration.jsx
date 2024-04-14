@@ -1,10 +1,9 @@
 import React from "react";
-import { ManagingLeavesStyles } from "./style";
+import { leaveConfigurationStyles } from "./style";
 import {Button, TextField} from "@mui/material";
-import {color} from "@mui/system";
 
 function LeaveConfiguration() {
-    const classes = ManagingLeavesStyles();
+    const classes = leaveConfigurationStyles();
 
     return (
         <div className={classes.root}>

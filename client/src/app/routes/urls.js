@@ -28,7 +28,7 @@ import overview from "../public/svgs/light/overview.svg";
 import ResetPassword from "../reset_password/ResetPassword";
 import Leave from "../leave/Leave.jsx";
 import ManagingLeaves from "../Components/managing/leaves/ManagingLeaves.jsx"
-import LeaveConfiguration from "../Components/managing/leaves/leaveConfiguration";
+import LeaveConfiguration from "../Components/managing/leaves/leaveConfiguration/leaveConfiguration";
 import ProjectOverView from "../Components/managing/leaves/ProjectOverView/ProjectOverView";
 export const anonymousUrls = [
   { title: "", path: "/", Component: <Navigate to="/login" /> },

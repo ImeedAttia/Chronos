@@ -1,10 +1,10 @@
 import React from "react";
-import { ManagingLeavesStyles } from "./style";
+import { projectOverviewStyles } from "./style";
 import useGetUserInfo from "../../../../../hooks/user";
 import Loading from "../../../loading/Loading";
 
 function ProjectOverView() {
-    const classes = ManagingLeavesStyles();
+    const classes = projectOverviewStyles();
     const {user , profile } =  useGetUserInfo();
     if(!user && !profile){
         return <Loading />;
