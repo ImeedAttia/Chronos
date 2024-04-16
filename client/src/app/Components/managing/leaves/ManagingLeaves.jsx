@@ -97,7 +97,6 @@ function ManagingLeaves() {
                 const remoteResponse = await getAllRemote();
                 const remoteArray = Object.values(remoteResponse)[0]?.remoteWorks || [];
                 const formattedRemotes = [];
-                console.log(remoteArray);
                 for (const remote of remoteArray) {
                     const userResponse = await getUser(remote.userID);
                     const user = Object.values(userResponse)[0] || {}; // Assuming user is available
@@ -168,7 +167,6 @@ function ManagingLeaves() {
                 endDate: new Date(new Date(row?.row?.remoteDate).setDate(new Date(row?.row?.remoteDate).getDate() + 1)),
                 userId: row?.row?.userID
             };
-            console.log(userinfo);
             const tasksss = await userTasks(userinfo);
             const taskss = Object.values(tasksss)[0]?.data || [];
             setTasks(taskss);
