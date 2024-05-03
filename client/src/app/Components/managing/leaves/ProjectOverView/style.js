@@ -2,51 +2,88 @@ import { createUseStyles } from "react-jss";
 
 export const projectOverviewStyles = createUseStyles({
     root: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "calc(100% - 100px)", // Adjust the height as needed
+        display: 'grid',
+        gridTemplateColumns: '1fr 300px',
+        gridTemplateRows: 'auto auto auto',
+        gap: '20px',
+        height: '100%',
+        width: '100%',
+        padding: '20px',
+        backgroundColor: '#f0f0f0',
     },
     titleSection: {
-        backgroundColor: "var(--light-green)",
-        padding: "30px",
-        borderRadius: "30px 30px 30px 30px",
-        marginBottom: "10px",
-    },
-    spanT: {
-        margin: "10px",
-        color: "white",
-        fontWeight: 600,
-        fontSize: "20px",
-        fontFamily: "'MyriadPro', sans-serif !important",
+        gridRow: '1',
+        gridColumn: '1 / 3',
+        backgroundColor: 'var(--light-green)',
+        padding: '20px',
+        borderRadius: '8px',
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+        marginBottom: '20px',
     },
     contentSection: {
-        width: "70%", // Take 70% of the width of the page
-        background: "var(--white)",
-        borderRadius: "20px",
-        paddingBottom: "20px",
-        paddingLeft: "20px",
-        boxShadow: "0px 7px 33px 0px rgba(0,0,0,0.3)",
-        margin: "20px", // Add margin of 20px
-        position: "relative",
-        zIndex: 1,
-        overflow: "auto",
-        "&::-webkit-scrollbar": {
-            width: "8px",
-            borderRadius: "10px",
-        },
-        "&::-webkit-scrollbar-track": {
-            WebkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.3)",
-            borderRadius: "10px",
-            backgroundColor: "var(--light-green)",
-        },
-        "&::-webkit-scrollbar-thumb": {
-            borderRadius: "10px",
-            background: "var(--pastel-green)",
-        },
+        backgroundColor: '#fff',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0px 4px 8px rgba(0,0,0,0.12)',
+        overflow: 'hidden',
     },
-
-    contentContainer: {
-        display: "block",
+    list: {
+        listStyleType: 'none',
+        padding: 0,
+        margin: 0,
+    },
+    listItem: {
+        borderBottom: '1px solid #ccc',
+        paddingBottom: '10px',
+        marginBottom: '10px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px',
+    },
+    projectDetails: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    projectName: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    projectDate: {
+        fontSize: '14px',
+        color: '#666',
+    },
+    employeeStatus: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    employeeCard: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '5px',
+        marginBottom: '10px',
+        borderRadius: '5px',
+    },
+    employeeNameEmail: {
+        fontSize: '0.8rem',
+        fontWeight: 'normal',
+        marginRight: '5px'
+    },
+    employeeStatusText: {
+        fontWeight: 'bold',
+        padding: '5px 10px',
+        borderRadius: '5px',
+    },
+    conge: {
+        backgroundColor: '#FFC6C6',
+    },
+    inoffice: {
+        backgroundColor: '#C5F7EC',
+    },
+    homeoffice: {
+        backgroundColor: '#F2DFBA',
     },
 });

@@ -116,7 +116,7 @@ export const protectedUrls = [
     superUser: true,
   },
   {
-    role: [SUPERUSER_ROLE],
+    role: [SUPERUSER_ROLE,PROJECT_MANAGER_ROLE],
     title: "Aperçu des projets",
     path: "/admin/manage/ProjectOverView",
     Component: <ProjectOverView />,

@@ -6,10 +6,11 @@ import {
   getAllRemoteWorksController,
   updateRemoteWork,
   deleteRemoteWork,
-  getAllRemoteWorksByEmail, // Import the controller for fetching remote works by user email
+  getUserProjects,
+  getAllRemoteWorksByEmail, getStatusOfEmployees, // Import the controller for fetching remote works by user email
 } from "../controllers/remote/remote.controller.js"; // Adjust the path as per your project structure
 import { checkUserRole, isUserAuthenticated } from '../middleware/auth.js'; // Adjust the path as per your project structure
-import { SUPERUSER_ROLE } from '../constants/constants.js'; // Adjust the path as per your project structure
+import {PROJECT_MANAGER_ROLE, SUPERUSER_ROLE} from '../constants/constants.js'; // Adjust the path as per your project structure
 
 const router = express.Router();
 
@@ -18,5 +19,7 @@ router.post("/user", isUserAuthenticated, getAllRemoteWorksByEmail); // Route fo
 router.post("/", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), createRemoteWork);
 router.put("/:id", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), updateRemoteWork);
 router.delete("/:remoteWorkId", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), deleteRemoteWork);
+router.post("/status", isUserAuthenticated,checkUserRole([SUPERUSER_ROLE,PROJECT_MANAGER_ROLE]), getStatusOfEmployees);
+router.post('/projects', isUserAuthenticated, getUserProjects);
 
 export default router;

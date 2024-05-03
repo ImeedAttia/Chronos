@@ -31,10 +31,24 @@ export const remoteWorkApi = api.injectEndpoints({
         data: data,
       }),
     }),
+    getStatusOfEmployees: builder.mutation({
+      query: (email) => ({
+        url: `/remote/status`,
+        method: "POST",
+        data: email,
+      }),
+    }),
     deleteRemoteWork: builder.mutation({
       query: (remoteWorkId) => ({
         url: `/remote/${remoteWorkId}`,
         method: "DELETE",
+      }),
+    }),
+    getUserProjects: builder.mutation({
+      query: (email) => ({
+        url: `/remote/projects`,
+        method: "POST",
+        data: email
       }),
     }),
   }),
@@ -46,4 +60,6 @@ export const {
   useCreateRemoteWorkMutation,
   useUpdateRemoteWorkMutation,
   useDeleteRemoteWorkMutation,
+  useGetStatusOfEmployeesMutation,
+  useGetUserProjectsMutation
 } = remoteWorkApi;
