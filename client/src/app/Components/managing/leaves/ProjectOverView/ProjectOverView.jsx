@@ -65,7 +65,7 @@ function ProjectOverView() {
                 Bonjour {profile.lastName} {profile.name},
             </div>
             <div className={classes.contentSection} style={{gridRow: '2', gridColumn: '1/3'}}>
-                <h2>Your Projects</h2>
+                <h3>Your Projects</h3>
                 <ul className={classes.list}>
                     {loadingProjects ? <LoadingProjectsSkeleton/> : (
                         projects?.map(project => (

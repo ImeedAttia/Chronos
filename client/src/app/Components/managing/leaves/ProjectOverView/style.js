@@ -26,7 +26,15 @@ export const projectOverviewStyles = createUseStyles({
         padding: '20px',
         borderRadius: '8px',
         boxShadow: '0px 4px 8px rgba(0,0,0,0.12)',
-        overflow: 'hidden',
+        overflowX: 'auto',
+        scrollSnapType: 'x mandatory', // Enables snap scrolling
+        '& > div': { // Assuming direct children are the "pages" or "slides"
+            scrollSnapAlign: 'start',
+            display: 'inline-block',
+            minWidth: '100%', // Example to ensure each child is full width
+            padding: '10px',
+            boxSizing: 'border-box',
+        }
     },
     list: {
         listStyleType: 'none',
