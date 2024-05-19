@@ -628,9 +628,6 @@ export const getDailyTasks = catchAsync(async (req, res, next) => {
       },
       {
         model: Task,
-        where: {
-          state: STATE_DOING,
-        },
         as: "task",
       },
     ],

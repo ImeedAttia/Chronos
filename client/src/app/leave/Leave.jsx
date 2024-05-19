@@ -2,11 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useGetAllLeavesByEmailMutation, useCreateLeaveMutation } from '../../store/api/leave.api';
 import { useDispatch } from 'react-redux';
 import Loading from '../Components/loading/Loading';
-import {Button, Select, MenuItem,TextField} from '@mui/material';
+import {
+  Button,
+  Select,
+  MenuItem,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText, DialogActions
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { leaveComponentStyles } from './style';
 import useGetAuthenticatedUser from "../../hooks/authenticated";
 import { useGetAllRemoteWorksByEmailMutation, useCreateRemoteWorkMutation } from '../../store/api/remote.api';
+import {notify} from "../Components/notification/notification";
+import {NOTIFY_ERROR, NOTIFY_SUCCESS} from "../../constants/constants";
 
 function LeaveComponent() {
   const classes = leaveComponentStyles();
@@ -17,6 +28,9 @@ function LeaveComponent() {
   const [remotes, setRemotes] = useState([]);
   const [showNewLeaveForm, setShowNewLeaveForm] = useState(false);
   const [showNewRemoteForm, setShowNewRemoteForm] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+
   const [userID, setUserId] = useState(0); // State to store user ID
   const [newLeaveData, setNewLeaveData] = useState({
     dateDebut: '',
@@ -51,7 +65,10 @@ function LeaveComponent() {
             ...leave,
             dateDebut: formatDate(new Date(leave.dateDebut)),
             dateFin: formatDate(new Date(leave.dateFin)),
+            supprimer : leave.name,
+            modifier : leave.id
           }));
+          console.log(formattedLeaves);
           setLeaves(formattedLeaves);
 
           const remoteResponse = await getAllRemoteByEmail({ email: user?.email });
@@ -59,6 +76,8 @@ function LeaveComponent() {
           const formattedRemotes = remoteArray.map(remote => ({
             ...remote,
             remoteDate: formatDate(new Date(remote.remoteDate)),
+            supprimer : remote.name,
+            modifier : remote.id
           }));
           setRemotes(formattedRemotes);
           setLoading(false);
@@ -90,9 +109,12 @@ function LeaveComponent() {
           status: '',
         });
         setShowNewLeaveForm(false);
+        notify(NOTIFY_SUCCESS, "Remote Created successfully");
       })
       .catch((error) => {
         console.error('Error creating leave:', error);
+        notify(NOTIFY_ERROR, error.data?.message);
+
       });
   };
 
@@ -109,9 +131,13 @@ function LeaveComponent() {
           status: '',
         });
         setShowNewRemoteForm(false);
+        notify(NOTIFY_SUCCESS, "Remote Created successfully");
+
       })
       .catch((error) => {
         console.error('Error creating remote work:', error);
+        notify(NOTIFY_ERROR, error.data?.message);
+
       });
   };
 
@@ -123,7 +149,7 @@ function LeaveComponent() {
     {
       field: 'status',
       headerName: 'Etat de demande',
-      width: 120,
+      width: 150,
       renderCell: (params) => {
         let statusColor = '';
         switch (params.value) {
@@ -143,7 +169,19 @@ function LeaveComponent() {
         return <div style={{ color: statusColor }}>{params.value}</div>;
       }
     },
+    { field: 'supprimer', headerName: 'Delete', width: 150,
+      renderCell: (params) => {
+      return <Button style={{ color: "red" }} value={params.value} onClick={deleteLeave}>Delete</Button>;
+      }
+    },
+    { field: 'modifier', headerName: 'Modifier', width: 150,
+      renderCell: (params) => {
+        return <Button style={{ color: "orange" }}  value={params.value}  onClick={changeLeave}>Modifier</Button>;
+      }
+    },
+
   ];
+
 
   const columnsTableRemote = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -172,7 +210,57 @@ function LeaveComponent() {
         return <div style={{ color: statusColor }}>{params.value}</div>;
       }
     },
+    ,
+    { field: 'supprimer', headerName: 'Delete', width: 150,
+      renderCell: (params) => {
+        return <Button style={{ color: "red" }} value={params.value} onClick={deleteLeave}>Delete</Button>;
+      }
+    },
+    { field: 'modifier', headerName: 'Modifier', width: 150,
+      renderCell: (params) => {
+        return <Button style={{ color: "orange" }}  value={params.value}  onClick={changeRemote}>Modifier</Button>;
+      }
+    },
+
   ];
+   const deleteLeave =  (event) =>{
+     setOpen(true);
+     setSelectedLeave(event.target.value);
+
+     // confirm("Are you sure you want to delete this leave?");
+    return event.target.value;
+  }
+
+  const changeLeave =  (event) =>{
+    const id = event.target.value ? Number(event.target.value) : 0;
+    console.log(id);
+
+    const selectedLeave = leaves.find((leave) => leave.id === id);
+    setNewLeaveData(selectedLeave);
+    console.log(selectedLeave);
+    setShowNewLeaveForm(true)
+    // confirm("Are you sure you want to delete this leave?");
+    return event.target.value;
+  }
+
+  const deleteRemote =  (event) =>{
+    setOpen(true);
+    setSelectedLeave(event.target.value);
+
+    // confirm("Are you sure you want to delete this leave?");
+    return event.target.value;
+  }
+
+  const changeRemote =  (event) =>{
+    const id = event.target.value ? Number(event.target.value) : 0;
+    const selectedRemote = remotes.find((leave) => leave.id === id);
+    console.log(id);
+
+    setNewRemoteData(selectedRemote);
+    setShowNewRemoteForm(true)
+    // confirm("Are you sure you want to delete this leave?");
+    return event.target.value;
+  }
   const calculateLeavesTaken = () => {
     const currentYear = new Date().getFullYear();
     const acceptedLeaves = leaves.filter(leave => leave.status === 'Accepté' && new Date(leave.dateDebut).getFullYear() === currentYear);
@@ -182,9 +270,7 @@ function LeaveComponent() {
       const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
       return total + daysDiff;
     }, 0);
-    console.log(totalLeavesTaken);
     const remainingLeaves = Math.max(0, 22 - totalLeavesTaken); // Maximum of 22 leaves per year
-    console.log(remainingLeaves);
     return remainingLeaves;
   };
 
@@ -199,7 +285,9 @@ function LeaveComponent() {
     if(remainingRemoteDays <=0) setAddDisableRemote(true);
     return remainingRemoteDays;
   };
-  
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   if (loading) return <Loading />;
   return (
@@ -323,7 +411,29 @@ function LeaveComponent() {
         )}
 
       </div>
+      <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this leave?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button color="secondary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
+
   );
 }
 

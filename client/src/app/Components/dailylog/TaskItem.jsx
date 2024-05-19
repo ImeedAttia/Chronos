@@ -56,7 +56,7 @@ const TaskItem = ({
         }
       </div>
 
-      {isProject && !appendables ? (
+      {isProject && !appendables ?  (
         <Slider
           handleChange={handleChange}
           id={id}

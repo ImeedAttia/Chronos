@@ -21,6 +21,8 @@ import faProject from "../public/svgs/light/diagram-project.svg";
 import faTimeLine from "../public/svgs/light/list-timeline.svg";
 import faLogout from "../public/svgs/light/right-from-bracket.svg";
 import faUser from "../public/svgs/light/user.svg";
+import faDashboard from "../public/svgs/light/folder.svg";
+
 import leavelogo from "../public/svgs/light/leave.svg";
 import manageLeave from "../public/svgs/light/manageLeave.svg";
 import faConfig from "../public/svgs/light/faConfig.svg";
@@ -30,6 +32,7 @@ import Leave from "../leave/Leave.jsx";
 import ManagingLeaves from "../Components/managing/leaves/ManagingLeaves.jsx"
 import LeaveConfiguration from "../Components/managing/leaves/leaveConfiguration/leaveConfiguration";
 import ProjectOverView from "../Components/managing/leaves/ProjectOverView/ProjectOverView";
+import DashboardComponent from "../Components/dashboard/Dashboard";
 export const anonymousUrls = [
   { title: "", path: "/", Component: <Navigate to="/login" /> },
   { title: "Login", path: "/login", Component: <Login /> },
@@ -86,6 +89,15 @@ export const protectedUrls = [
     Component: <UserProfile />,
     icon: faUser,
     sideBar: false,
+    superUser: true,
+  },
+  {
+    role: ALL_ROLES,
+    title: "Dashboard",
+    path: "/dashboard",
+    Component: <DashboardComponent />,
+    icon: faDashboard,
+    sideBar: true,
     superUser: true,
   },
   {

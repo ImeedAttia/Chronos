@@ -49,7 +49,6 @@ const UserProfile = () => {
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={6} xl={8} className={classes.gridItem} sx={{opacity:0.4 ,height:'100%'}}>
           <div className={classes.hoverCard}>
-
           <SideLayoutMain />
           </div>
         </Grid>
