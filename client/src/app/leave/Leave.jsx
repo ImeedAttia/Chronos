@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useGetAllLeavesByEmailMutation, useCreateLeaveMutation } from '../../store/api/leave.api';
+import {
+  useGetAllLeavesByEmailMutation,
+  useCreateLeaveMutation,
+  useDeleteLeaveMutation
+} from '../../store/api/leave.api';
 import { useDispatch } from 'react-redux';
 import Loading from '../Components/loading/Loading';
 import {
@@ -15,7 +19,11 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import { leaveComponentStyles } from './style';
 import useGetAuthenticatedUser from "../../hooks/authenticated";
-import { useGetAllRemoteWorksByEmailMutation, useCreateRemoteWorkMutation } from '../../store/api/remote.api';
+import {
+  useGetAllRemoteWorksByEmailMutation,
+  useCreateRemoteWorkMutation,
+  useDeleteRemoteWorkMutation
+} from '../../store/api/remote.api';
 import {notify} from "../Components/notification/notification";
 import {NOTIFY_ERROR, NOTIFY_SUCCESS} from "../../constants/constants";
 
@@ -30,6 +38,7 @@ function LeaveComponent() {
   const [showNewRemoteForm, setShowNewRemoteForm] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
+  const [selectedRemote, setSelectedRemote] = useState(null);
 
   const [userID, setUserId] = useState(0); // State to store user ID
   const [newLeaveData, setNewLeaveData] = useState({
@@ -49,6 +58,8 @@ function LeaveComponent() {
   const [getAllLeavesByEmail] = useGetAllLeavesByEmailMutation();
   const [getAllRemoteByEmail] = useGetAllRemoteWorksByEmailMutation();
   const [createRemote] = useCreateRemoteWorkMutation();
+  const  [handleDeleteLeave] = useDeleteLeaveMutation();
+  const [handleDeleteRemote] = useDeleteRemoteWorkMutation();
   function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based, so add 1
@@ -169,19 +180,23 @@ function LeaveComponent() {
         return <div style={{ color: statusColor }}>{params.value}</div>;
       }
     },
-    { field: 'supprimer', headerName: 'Delete', width: 150,
+    {
+      field: 'supprimer',
+      headerName: 'Delete',
+      width: 150,
       renderCell: (params) => {
-      return <Button style={{ color: "red" }} value={params.value} onClick={deleteLeave}>Delete</Button>;
+        return <Button style={{ color: "red" }} onClick={() => deleteLeave(params)}>Delete</Button>;
       }
     },
-    { field: 'modifier', headerName: 'Modifier', width: 150,
+    {
+      field: 'modifier',
+      headerName: 'Modifier',
+      width: 150,
       renderCell: (params) => {
-        return <Button style={{ color: "orange" }}  value={params.value}  onClick={changeLeave}>Modifier</Button>;
+        return <Button style={{ color: "orange" }} onClick={() => changeLeave(params)}>Modifier</Button>;
       }
-    },
-
+    }
   ];
-
 
   const columnsTableRemote = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -210,26 +225,45 @@ function LeaveComponent() {
         return <div style={{ color: statusColor }}>{params.value}</div>;
       }
     },
-    ,
-    { field: 'supprimer', headerName: 'Delete', width: 150,
+    {
+      field: 'supprimer',
+      headerName: 'Delete',
+      width: 150,
       renderCell: (params) => {
-        return <Button style={{ color: "red" }} value={params.value} onClick={deleteLeave}>Delete</Button>;
+        return <Button style={{ color: "red" }} onClick={() => deleteRemote(params)}>Delete</Button>;
       }
     },
-    { field: 'modifier', headerName: 'Modifier', width: 150,
+    {
+      field: 'modifier',
+      headerName: 'Modifier',
+      width: 150,
       renderCell: (params) => {
-        return <Button style={{ color: "orange" }}  value={params.value}  onClick={changeRemote}>Modifier</Button>;
+        return <Button style={{ color: "orange" }} onClick={() => changeRemote(params)}>Modifier</Button>;
       }
-    },
+    }
 
   ];
-   const deleteLeave =  (event) =>{
-     setOpen(true);
-     setSelectedLeave(event.target.value);
+  const deleteLeave = (params) => {
+    const leaveId = params.row.id;
+    setSelectedLeave(leaveId);
+    setOpen(true);
+    console.log(selectedLeave)
+  };
+  const deleteLeaveData = () => {
+    if (selectedLeave !== null) {
+      handleDeleteLeave(selectedLeave);
+      setSelectedLeave(null);
+          setOpen(false);
+      window.location.reload();
+    } else {
+      handleDeleteRemote(selectedRemote);
+      setSelectedRemote(null);
+          setOpen(false);
+      window.location.reload();
 
-     // confirm("Are you sure you want to delete this leave?");
-    return event.target.value;
-  }
+    }
+    ;
+  };
 
   const changeLeave =  (event) =>{
     const id = event.target.value ? Number(event.target.value) : 0;
@@ -244,12 +278,12 @@ function LeaveComponent() {
   }
 
   const deleteRemote =  (event) =>{
+    const remoteId = event.row.id;
+    setSelectedRemote(remoteId);
     setOpen(true);
-    setSelectedLeave(event.target.value);
-
-    // confirm("Are you sure you want to delete this leave?");
-    return event.target.value;
+    console.log(selectedRemote)
   }
+
 
   const changeRemote =  (event) =>{
     const id = event.target.value ? Number(event.target.value) : 0;
@@ -420,14 +454,16 @@ function LeaveComponent() {
         <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this leave?
+            {selectedLeave !== null
+                ? "Are you sure you want to delete this leave?"
+                : "Are you sure you want to delete this remote?"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button color="secondary" autoFocus>
+          <Button color="secondary" onClick={deleteLeaveData} autoFocus>
             Confirm
           </Button>
         </DialogActions>

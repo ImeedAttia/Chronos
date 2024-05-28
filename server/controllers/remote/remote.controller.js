@@ -49,8 +49,8 @@ export const updateRemoteWork = async (req, res, next) => {
 
 export const deleteRemoteWork = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const remoteWork = await Remote.findByPk(id);
+    const { remoteWorkId } = req.params;
+    const remoteWork = await Remote.findByPk(remoteWorkId);
     if (!remoteWork) {
       throw new ElementNotFound("Remote work not found");
     }

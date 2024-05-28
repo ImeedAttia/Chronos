@@ -13,10 +13,10 @@ import { SUPERUSER_ROLE } from '../constants/constants.js'
 
 const router = express.Router();
 
-router.get("/", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), getAllLeavesController);
+router.get("/", isUserAuthenticated, getAllLeavesController);
 router.post("/user", isUserAuthenticated, getAllLeavesByUserId); // Route for fetching leaves by user email in the body
-router.post("/", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), createLeave);
-router.put("/:id", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), updateLeave);
-router.delete("/:leaveId", isUserAuthenticated, checkUserRole([SUPERUSER_ROLE]), deleteLeave);
+router.post("/", isUserAuthenticated,  createLeave);
+router.put("/:id", isUserAuthenticated, updateLeave);
+router.delete("/:leaveId", isUserAuthenticated, deleteLeave);
 
 export default router;

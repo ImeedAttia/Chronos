@@ -52,8 +52,8 @@ export const updateLeave = async (req, res, next) => {
 
 export const deleteLeave = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const leave = await Leave.findByPk(id);
+    const { leaveId } = req.params;
+    const leave = await Leave.findByPk(leaveId);
     if (!leave) {
       throw new ElementNotFound("Leave not found");
     }

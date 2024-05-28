@@ -39,8 +39,8 @@ export const remoteWorkApi = api.injectEndpoints({
       }),
     }),
     deleteRemoteWork: builder.mutation({
-      query: (remoteWorkId) => ({
-        url: `/remote/${remoteWorkId}`,
+      query: (id) => ({
+        url: `/remote/${id}`,
         method: "DELETE",
       }),
     }),

@@ -32,8 +32,8 @@ export const leaveApi = api.injectEndpoints({
       }),
     }),
     deleteLeave: builder.mutation({
-      query: (leaveId) => ({
-        url: `/leaves/${leaveId}`,
+      query: (id) => ({
+        url: `/leaves/${id}`,
         method: "DELETE",
       }),
     }),
