@@ -16,7 +16,7 @@ To get started with Chronos, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/ITsolutionBadr/chronos.git
+   git clone [https://github.com/ImeedAttia/Chronos.git](https://github.com/ImeedAttia/Chronos.git)
 
 2. install the dependencies of the main directory
    ```bash
@@ -60,8 +60,8 @@ Use the following scripts to manage your Chronos project:
    ```bash
    npm run  migrate-data-v2 db
 ## License
-This project is licensed under the ISC License.
+This project is licensed under the IA License.
 
 ## Repository
-GitHub: https://github.com/ITsolutionBadr/chronos
+GitHub: https://github.com/ImeedAttia/Chronos
 
